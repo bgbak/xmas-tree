@@ -18,6 +18,7 @@
 #define PIN 1					            //Pin 1 is DATA In on the bottom Ring
 #define BRIGHTNESS 10 			      // brightness reduced
 
+#define numOfLeds 61
 
 //Lookups for the X-M-A-S Letters viewed from above:
  const unsigned int charX[] PROGMEM = 
@@ -43,6 +44,15 @@
   15,10,48,45,36,19,59,29,5,43,41,39,24,3,61
  };
 
+//Lookup for individual rings
+int numOfRings = 5;
+int ring1 = 24;
+int ring2 = 12;
+int ring3 = 16;
+int ring4 = 8;
+int ring5 = 1;
+
+
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -65,24 +75,25 @@ void setup() {
   strip.show(); // Initialize all pixels to 'off'
   
   //2x XMAS Letters:
-  xmas();
-  delay(2000);
-  xmas();
-  delay(2000);
+  //xmas();
+  //delay(2000);
+  //xmas();
+  //delay(2000);
   
 }
 
 void loop() {
   
   //Tree light:
-  tree();
-  delay(10000);
+  //tree();
+  //delay(10000);
 
   //Color crazy:
-  colorcrazy();
+  //colorcrazy();
   //delay(1000);
   
-
+  ringByRing();
+  //oneByOne();
   /*
   // Some example procedures showing how to display to the pixels:
   colorWipe(strip.Color(255, 0, 0), 50); // Red
@@ -252,6 +263,60 @@ void theaterChaseRainbow(uint8_t wait) {
   }
 }
 
+//Light the rings one by one, and finally the star
+//Light the bottom ring green
+void ringByRing() {
+  for (int i=0; i < ring1 + 1; i++) {
+    strip.setPixelColor(i, 0, 255, 0);
+    strip.show();
+  }
+  delay(1000);
+  for (int i=ring1+1; i < ring1 + ring2 - 1; i++) {
+    strip.setPixelColor(i, 0, 255, 0);
+    strip.show();
+  }
+  delay(1000);
+  for (int i=ring1 + ring2 + 1; i < ring1 + ring2 + ring3 -1; i++) {
+    strip.setPixelColor(i, 0, 255, 0);
+    strip.show();
+  }
+  delay(1000);
+  for (int i=ring1 + ring2 + ring3 + 1; i < ring1 + ring2 + ring3 + ring4 -1 ; i++) {
+    strip.setPixelColor(i, 0, 255, 0);
+    strip.show();
+  }
+  delay(1000);
+  strip.setPixelColor((ring1+ring2+ring3+ring4+ring5 + 1), 0, 255, 0);
+  strip.show();
+    
+delay(5000);
+colorWipe(strip.Color(0, 0, 0), 0);
+delay(500);
+}
+
+void oneByOne() {
+  for (int i=0; i < numOfLeds; i++) {
+    strip.setPixelColor(i, 0,255,0);
+    strip.show();
+    delay(100);
+  }
+  for (int i=0; i < numOfLeds; i++) {
+    strip.setPixelColor(i, 255,0,0);
+    strip.show();
+    delay(100);
+  }
+  for (int i=0; i < numOfLeds; i++) {
+    strip.setPixelColor(i, 0,0,255);
+    strip.show();
+    delay(100);
+  }
+  for (int i=0; i < numOfLeds; i++) {
+    strip.setPixelColor(i, 255,255,255);
+    strip.show();
+    delay(100);
+  }
+}
+
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
@@ -266,3 +331,4 @@ uint32_t Wheel(byte WheelPos) {
    return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
   }
 }
+
