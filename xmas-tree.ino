@@ -15,10 +15,10 @@
 #include <Adafruit_NeoPixel.h>    //needed for the WS2812
 #include <avr/pgmspace.h>		      //needed for PROGMEM
 
-#define PIN 1					            //Pin 1 is DATA In on the bottom Ring
+#define PIN 2					            //Pin 1 is DATA In on the bottom Ring
 #define BRIGHTNESS 10 			      // brightness reduced
+#define PIXELCOUNT  93            //Num of LEDs
 
-#define numOfLeds 61
 
 //Lookups for the X-M-A-S Letters viewed from above:
  const unsigned int charX[] PROGMEM = 
@@ -41,18 +41,36 @@
  //Lookup for the Candle light
  const unsigned int candles[] PROGMEM = 
  { 
-  15,10,48,45,36,19,59,29,5,43,41,39,24,3,61
+  //15,10,48,45,36,19,59,29,5,43,41,39,24,3,61
+  47,42,80,77,68,51,91,61,37,75,73,71,56,35,93 // For use with 93 LEDs
  };
 
 //Lookup for individual rings
-int numOfRings = 5;
-int ring1 = 24;
-int ring2 = 12;
+int numOfRings = 6;
+int ring6 = 1;
+int ring5 = 8;
+int ring4 = 12;
 int ring3 = 16;
-int ring4 = 8;
-int ring5 = 1;
+int ring2 = 24;
+int ring1 = 32;
 
+int ring1start = 0;
+int ring1stop = ring1start + ring1 - 1;
 
+int ring2start = ring1;
+int ring2stop = ring2start + ring2 - 1;
+
+int ring3start = ring1 + ring2;
+int ring3stop = ring3start + ring3 - 1;
+
+int ring4start = ring1 + ring2 + ring3;
+int ring4stop = ring4start + ring4 - 1;
+
+int ring5start = ring1 + ring2 + ring3 + ring4;
+int ring5stop = ring5start + ring5 - 1;
+
+int ring6start = ring1 + ring2 + ring3 + ring4 + ring5;
+int ring6stop = ring6start + ring6 - 1;
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -61,7 +79,7 @@ int ring5 = 1;
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(61, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXELCOUNT, PIN, NEO_GRB + NEO_KHZ800);
 
 // IMPORTANT: To reduce NeoPixel burnout risk, add 1000 uF capacitor across
 // pixel power leads, add 300 - 500 Ohm resistor on first pixel's data input
@@ -74,26 +92,29 @@ void setup() {
   strip.setBrightness(BRIGHTNESS); // set brightness
   strip.show(); // Initialize all pixels to 'off'
   
-  //2x XMAS Letters:
+  //XMAS Letters:
   //xmas();
-  //delay(2000);
-  //xmas();
-  //delay(2000);
-  
+//  delay(2000);  
 }
 
 void loop() {
-  
+    
   //Tree light:
   //tree();
-  //delay(10000);
+  //delay(1000);
 
   //Color crazy:
   //colorcrazy();
   //delay(1000);
+
+  warpdrive();
+//comet();
+
+//  for(int i = 0; i <= 10; i++){
+//    ringByRing(strip.Color(0,255,0),50);
+//  }
+  delay(1000);
   
-  ringByRing();
-  //oneByOne();
   /*
   // Some example procedures showing how to display to the pixels:
   colorWipe(strip.Color(255, 0, 0), 50); // Red
@@ -112,19 +133,133 @@ void loop() {
 
 //Sub-----------------------------------------------------------------------
 
+//Comet
+void comet(){
+  for(uint16_t i=strip.numPixels(); i>0; i--) {
+     strip.setPixelColor(i,strip.Color(0, 0, 255));
+     fadethemall(10);
+     fadethemall(10);
+  }
+}
+
+//From top down white pulses
+void warpdrive(){
+
+  //Top Led
+  strip.setPixelColor(PIXELCOUNT - 1,strip.Color(255, 255, 255));
+  strip.show();
+  //fade a bit
+  for (int i = 0; i < 20; i++)
+  {
+    fadethemall(20);
+  } 
+  //8 Ring
+  for (int i = ring5start; i <= ring5stop; i++)
+  {
+    strip.setPixelColor(i,strip.Color(255, 255, 255));
+  }
+  strip.show();
+  //fade a bit
+  for (int i = 0; i < 20; i++)
+  {
+    fadethemall(20);
+  } 
+  //12 Ring
+  for (int i = ring4start; i <= ring4stop; i++)
+  {
+    strip.setPixelColor(i,strip.Color(255, 255, 255));
+  }
+  strip.show();
+  //fade a bit
+  for (int i = 0; i < 20; i++)
+  {
+    fadethemall(20);
+  } 
+  //16 Ring
+  for (int i = ring3start; i <= ring3stop; i++)
+  {
+    strip.setPixelColor(i,strip.Color(255, 255, 255));
+  }
+  strip.show();
+  //fade a bit
+  for (int i = 0; i < 20; i++)
+  {
+    fadethemall(20);
+  }
+  //24 Ring
+  for (int i = ring2start; i <= ring2stop; i++)
+  {
+    strip.setPixelColor(i,strip.Color(255, 255, 255));
+  }
+  strip.show();
+  //fade a bit
+  for (int i = 0; i < 20; i++)
+  {
+    fadethemall(20);
+  }
+  //32 Ring
+  for (int i = ring1start; i <= ring1stop; i++)
+  {
+    strip.setPixelColor(i,strip.Color(255, 255, 255));
+  }
+  strip.show();
+  //fade a bit
+  for (int i = 0; i < 20; i++)
+  {
+    fadethemall(20);
+  }
+}
+
+//This reduces the brightness of all leds
+void fadethemall(uint8_t wait){
+    for(uint16_t i=0; i<strip.numPixels(); i++) {
+      uint32_t color = strip.getPixelColor(i);
+      int r;
+      int g;
+      int b;
+      r = (uint8_t)(color >> 16);
+      g = (uint8_t)(color >>  8);
+      b = (uint8_t)color;
+
+      if(r>0)
+      {
+        r = r - 1;
+      }
+      else
+      {
+        r = 0;
+      }
+
+      if(g>0)
+      {
+        g = g - 1;
+      }
+      else
+      {
+        g = 0;
+      }
+
+      if(b>0)
+      {
+        b = b - 1;
+      }
+      else
+      {
+        b = 0;
+      }
+      
+      strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+  strip.show();
+  delay(wait);
+}
+
 //This drives the WS2812 in a crazy pattern, fun!
 void colorcrazy(){ 
   colorWipe(strip.Color(255, 0, 0), 25); // Red
   colorWipe(strip.Color(0, 255, 0), 25); // Green
-  colorWipe(strip.Color(0, 0, 255), 25); // Blue
-  
-  for (int i = 0; i < 10; i++)
-  {
-    theaterChaseRainbow(5);
-  }  
-  
-  colorWipe(strip.Color(0, 0, 0), 0); // Black
-  
+  colorWipe(strip.Color(0, 0, 255), 25); // Blue  
+  theaterChaseRainbow(5);
 }
 
 //This lights up the tree in green, then add the white "candles"
@@ -263,60 +398,6 @@ void theaterChaseRainbow(uint8_t wait) {
   }
 }
 
-//Light the rings one by one, and finally the star
-//Light the bottom ring green
-void ringByRing() {
-  for (int i=0; i < ring1 + 1; i++) {
-    strip.setPixelColor(i, 0, 255, 0);
-    strip.show();
-  }
-  delay(1000);
-  for (int i=ring1+1; i < ring1 + ring2 - 1; i++) {
-    strip.setPixelColor(i, 0, 255, 0);
-    strip.show();
-  }
-  delay(1000);
-  for (int i=ring1 + ring2 + 1; i < ring1 + ring2 + ring3 -1; i++) {
-    strip.setPixelColor(i, 0, 255, 0);
-    strip.show();
-  }
-  delay(1000);
-  for (int i=ring1 + ring2 + ring3 + 1; i < ring1 + ring2 + ring3 + ring4 -1 ; i++) {
-    strip.setPixelColor(i, 0, 255, 0);
-    strip.show();
-  }
-  delay(1000);
-  strip.setPixelColor((ring1+ring2+ring3+ring4+ring5 + 1), 0, 255, 0);
-  strip.show();
-    
-delay(5000);
-colorWipe(strip.Color(0, 0, 0), 0);
-delay(500);
-}
-
-void oneByOne() {
-  for (int i=0; i < numOfLeds; i++) {
-    strip.setPixelColor(i, 0,255,0);
-    strip.show();
-    delay(100);
-  }
-  for (int i=0; i < numOfLeds; i++) {
-    strip.setPixelColor(i, 255,0,0);
-    strip.show();
-    delay(100);
-  }
-  for (int i=0; i < numOfLeds; i++) {
-    strip.setPixelColor(i, 0,0,255);
-    strip.show();
-    delay(100);
-  }
-  for (int i=0; i < numOfLeds; i++) {
-    strip.setPixelColor(i, 255,255,255);
-    strip.show();
-    delay(100);
-  }
-}
-
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
@@ -332,3 +413,70 @@ uint32_t Wheel(byte WheelPos) {
   }
 }
 
+//Light the rings one by one, and finally the star
+//Light the bottom ring green
+void ringByRing(uint32_t c, uint8_t wait) {
+  for(int i = ring1start; i <= ring1stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring2start; i <= ring2stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring3start; i <= ring3stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring4start; i <= ring4stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring5start; i <= ring5stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring6start; i <= ring6stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  
+  //Turn off all pixels
+  c = strip.Color(0,0,0);
+  for(int i = ring1start; i <= ring1stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring2start; i <= ring2stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring3start; i <= ring3stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring4start; i <= ring4stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring5start; i <= ring5stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  for(int i = ring6start; i <= ring6stop; i++){
+    strip.setPixelColor(i,c);
+  }
+  strip.show();
+  delay(wait);
+  }
