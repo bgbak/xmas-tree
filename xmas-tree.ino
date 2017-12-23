@@ -42,7 +42,18 @@
  const unsigned int candles[] PROGMEM = 
  { 
   //15,10,48,45,36,19,59,29,5,43,41,39,24,3,61
-  47,42,80,77,68,51,91,61,37,75,73,71,56,35,93 // For use with 93 LEDs
+  //Ring 1
+  0,3,7,11,15,19,23,27,
+  //Ring 2
+  32,35,38,42,44,47,50,53,
+  //Ring 3
+  56,58,60,62,64,66,68,70,
+  //Ring 4
+  72,75,79,82,
+  //Ring 5
+  84,86,88,90,
+  //Star
+  92
  };
 
 //Lookup for individual rings
@@ -72,19 +83,19 @@ int ring5stop = ring5start + ring5 - 1;
 int ring6start = ring1 + ring2 + ring3 + ring4 + ring5;
 int ring6stop = ring6start + ring6 - 1;
 
-// Parameter 1 = number of pixels in strip
-// Parameter 2 = Arduino pin number (most are valid)
-// Parameter 3 = pixel type flags, add together as needed:
-//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
-//   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
-//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
-//   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(PIXELCOUNT, PIN, NEO_GRB + NEO_KHZ800);
 
-// IMPORTANT: To reduce NeoPixel burnout risk, add 1000 uF capacitor across
-// pixel power leads, add 300 - 500 Ohm resistor on first pixel's data input
-// and minimize distance between Arduino and first pixel.  Avoid connecting
-// on a live circuit...if you must, connect GND first.
+//Lookup for twinkle colors
+uint32_t off = strip.Color(0, 0, 0);
+uint32_t green = strip.Color(0, 255, 0);
+uint32_t red = strip.Color(255, 0, 0);
+uint32_t blue = strip.Color(0, 0, 255);
+uint32_t white = strip.Color(127, 127, 127);
+uint32_t magenta = strip.Color(255, 0, 255);
+uint32_t yellow = strip.Color(255, 255, 0);
+uint32_t cyan = strip.Color(0,255,255);
+uint32_t twinkle_colors[] = {green, red, blue,magenta,yellow,cyan};
+
 
 void setup() {
   pinMode(PIN, OUTPUT);
@@ -94,10 +105,15 @@ void setup() {
   
   //XMAS Letters:
   //xmas();
-//  delay(2000);  
+  //delay(2000);  
 }
 
 void loop() {
+
+  colorWipe(twinkle_colors[random(0,5)],50);
+  //colorWipe(twinkle_colors[5],50);
+  strip.show();
+  delay(1000);
     
   //Tree light:
   //tree();
@@ -107,13 +123,14 @@ void loop() {
   //colorcrazy();
   //delay(1000);
 
-  warpdrive();
-//comet();
+  //warpdrive();
+  //comet();
 
 //  for(int i = 0; i <= 10; i++){
 //    ringByRing(strip.Color(0,255,0),50);
-//  }
-  delay(1000);
+  //}
+  //delay(1000);
+  //twinkles(10);
   
   /*
   // Some example procedures showing how to display to the pixels:
@@ -268,10 +285,9 @@ void tree(){
   colorWipe(strip.Color(0, 50, 0), 50); // Green
 
   //light "candles"
-  //Show the S:
-  for (int i = 0; i < 16; i++)
+  for (int i = 0; i < 33; i++)
   {
-    strip.setPixelColor(pgm_read_word(&candles[i])-1,strip.Color(255, 255, 255));
+    strip.setPixelColor(pgm_read_word(&candles[i]),strip.Color(255, 255, 255));
     strip.show();
     delay(50);
   }
@@ -480,3 +496,12 @@ void ringByRing(uint32_t c, uint8_t wait) {
   strip.show();
   delay(wait);
   }
+
+ void twinkles(int loops){
+  colorWipe(strip.Color(0,255,0),0);
+  strip.setPixelColor(PIXELCOUNT -1, strip.Color(255,255,255));
+  strip.show();
+
+  
+ }
+
